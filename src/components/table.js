@@ -12,7 +12,7 @@ export function initTable(settings, onAction) {
     const root = cloneTemplate(tableTemplate);
 
     // @todo: #1.2 —  вывести дополнительные шаблоны до и после таблицы
-    [...before].reverse().forEach(subName => {
+    before.slice().reverse().forEach(subName => { 
         root[subName] = cloneTemplate(subName);
         root.container.prepend(root[subName].container); // добавляем до таблицы
     });
@@ -42,10 +42,10 @@ export function initTable(settings, onAction) {
             const row = cloneTemplate(rowTemplate);
 
             Object.keys(item).forEach(key => {
-                if (key in row.elements) {
-                    const element = row.elements[key]; 
-                    element.textContent = item[key];
+                if (row.elements[key]) { // если в шаблоне есть элемент для этого ключа
+                    row.elements[key].textContent = item[key]; // заполняем его значением из данных
                 }
+            
         });
 
         return row.container;
