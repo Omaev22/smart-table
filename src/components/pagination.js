@@ -12,11 +12,21 @@ export const initPagination = ({pages, fromRow, toRow, totalRows}, createPage) =
         let page = state.page;                                   // страница переменной, потому что она может меняться при обработке действий позже
 
         // @todo: #2.6 — обработать действия
-        if (action) switch(action.name) {
-            case 'prev': page = Math.max(1, page - 1); break;            // переход на предыдущую страницу
-            case 'next': page = Math.min(pageCount, page + 1); break;    // переход на следующую страницу
-            case 'first': page = 1; break;                                // переход на первую страницу
-            case 'last': page = pageCount; break;                        // переход на последнюю страницу
+        if (action) {
+            switch(action.name) {
+            case 'prev': 
+                page = Math.max(1, page - 1); 
+                break;                                      // переход на предыдущую страницу
+            case 'next': 
+                page = Math.min(pageCount, page + 1); 
+                break;                                     // переход на следующую страницу
+            case 'first': 
+                page = 1; 
+                break;                                     // переход на первую страницу
+            case 'last': 
+                page = pageCount; 
+                break;                                    // переход на последнюю страницу
+            }
         }
 
         // @todo: #2.4 — получить список видимых страниц и вывести их
@@ -25,7 +35,8 @@ export const initPagination = ({pages, fromRow, toRow, totalRows}, createPage) =
         pages.replaceChildren(...visiblePages.map(pageNumber => {        // перебираем их и создаём для них кнопку
             const el = pageTemplate.cloneNode(true);                    // клонируем шаблон, который запомнили ранее
             return createPage(el, pageNumber, pageNumber === page);        // вызываем колбэк из настроек, чтобы заполнить кнопку данными
-        }))
+        })
+        ); 
 
         // @todo: #2.5 — обновить статус пагинации
         fromRow.textContent = (page - 1) * rowsPerPage + 1;                    // С какой строки выводим
