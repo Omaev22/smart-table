@@ -44,8 +44,7 @@ export function initTable(settings, onAction) {
             Object.keys(item).forEach(key => {
                 if (row.elements[key]) { // если в шаблоне есть элемент для этого ключа
                     row.elements[key].textContent = item[key]; // заполняем его значением из данных
-                }
-            
+                }          
         });
 
         return row.container;

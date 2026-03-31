@@ -6,13 +6,14 @@ const compare = createComparison(defaultRules);    // Сравнение для 
 export function initFiltering(elements, indexes) {
     // @todo: #4.1 — заполнить выпадающие списки опциями
     Object.keys(indexes)                                    // Получаем ключи из объекта
-      .forEach((name) => {                        // Перебираем по именам
-        elements[name].append(                    // в каждый элемент добавляем опции
-            ...Object.values(indexes[name])        // формируем массив имён, значений опций
-                      .map((value) => {                        // используйте name как значение и текстовое содержимое
-                        const option = document.createElement('option'); // @todo: создать и вернуть тег опции
-                        option.value = value;
-                        option.textContent = value;
+      .forEach((elementName) => {                        // Перебираем по именам
+        elements[elementName].append(                    // в каждый элемент добавляем опции
+            ...Object.values(indexes[elementName])        // формируем массив имён, значений опций
+                      .map((name) => {                        // используйте name как значение и текстовое содержимое
+                        const option = elements[elementName].firstElementChild.cloneNode(); // @todo: создать и вернуть тег опции
+                        option.removeAttribute('selected'); // Удалим атрибут selected, если он есть в шаблоне
+                        option.value = name;
+                        option.textContent = name;
                         return option;
                         })
         )
@@ -21,15 +22,18 @@ export function initFiltering(elements, indexes) {
     return (data, state, action) => {
         // @todo: #4.2 — обработать очистку поля
         if (action && action.name === 'clear') {
-            const field = action.dataset.field; // Узнаем, для какого поля очистка
-
-            const input = action.parentElement.querySelector('input')    // Найдём рядом стоящее поле ввода
-            if (input) input.value = ''; // Если нашли, очистим его
-            
-            state[field] = ''; // И очистим в состоянии, чтобы фильтрация отработала
+            const field = action.parentElement.querySelector('input');  // Найдём поле, связанное с кнопкой очистки (предполагаем, что оно внутри того же родителя)
+            field.value = '';    // Очистим его
+            state[action.dataset.field] = ''; // И в состоянии тоже очистим, чтобы фильтрация отработала правильно
         }
 
         // @todo: #4.5 — отфильтровать данные используя компаратор
-        return data.filter(row => compare(row, state));    // Фильтруем данные, сравнивая каждую строку с состоянием    
+        const filterState = {
+            date: state.date,
+            customer: state.customer,
+            seller: state.seller,
+            total: [state.totalFrom, state.totalTo]
+        }
+        return data.filter(element => compare(element, filterState));    // Фильтруем данные, сравнивая каждую строку с состоянием    
     }
 }
